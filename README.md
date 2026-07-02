@@ -1,31 +1,18 @@
-# Sociaal Domein Kompas MVP — deel 5
+# Sociaal Domein Kompas MVP — deel 6
 
 Deze versie bevat:
 - Thema kiezen
 - Doel kiezen
 - Interventie kiezen
-- Gemeente kiezen via filterbare dropdownlijst
-- OpenAI API-koppeling
-- OpenAI web search tool
+- Gemeente zoeken zoals Booking.com
+- Tijdens typen verschijnen direct passende gemeenten
+- OpenAI web search
 - Resultatenlijst met bronlinks
 
-## Gemeente kiezen
-
-Je typt een paar letters in het filterveld.
-Daarna toont de dropdown alleen gemeenten die daarbij passen.
-
-Voorbeelden:
-- `ed` → Ede, Edam-Volendam
-- `zwol` → Zwolle
-- `gron` → Groningen
-
-## Vereist in Vercel
-
+Vereist in Vercel:
 `OPENAI_API_KEY`
 
-## Uploaden naar GitHub
-
-Upload/vervang:
+Upload/vervang in GitHub:
 - `app`
 - `package.json`
 - `README.md`

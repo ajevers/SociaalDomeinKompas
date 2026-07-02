@@ -10,6 +10,7 @@ export default function Home() {
   const [selectedIntervention, setSelectedIntervention] = useState('');
   const [municipality, setMunicipality] = useState('');
   const [municipalitySearch, setMunicipalitySearch] = useState('');
+  const [showMunicipalityOptions, setShowMunicipalityOptions] = useState(false);
   const [message, setMessage] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -83,9 +84,9 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
-        <p className="label">MVP deel 5</p>
+        <p className="label">MVP deel 6</p>
         <h1>Sociaal Domein Kompas</h1>
-        <p>Elementaire versie met filterbare gemeentelijst en OpenAI web search.</p>
+        <p>Elementaire versie met gemeentezoeker zoals Booking.com en OpenAI web search.</p>
       </section>
 
       <section className="notice">
@@ -133,34 +134,47 @@ export default function Home() {
         <section className="card">
           <h2>4. Kies gemeente</h2>
 
-          <label>Filter gemeenten
-            <input
-              value={municipalitySearch}
-              onChange={(event) => {
-                setMunicipalitySearch(event.target.value);
-                setMunicipality('');
-                clearResults();
-              }}
-              placeholder="Typ bijvoorbeeld: ed, zwol, gron"
-            />
-          </label>
-
           <label>Gemeente
-            <select
-              className="municipalitySelect"
-              value={municipality}
-              onChange={(event) => chooseMunicipality(event.target.value)}
-            >
-              <option value="">Kies een gemeente</option>
-              {municipalityOptions.map((name) => (
-                <option key={name} value={name}>{name}</option>
-              ))}
-            </select>
-          </label>
+            <div className="municipalitySearchBox">
+              <input
+                value={municipalitySearch}
+                onFocus={() => setShowMunicipalityOptions(true)}
+                onChange={(event) => {
+                  setMunicipalitySearch(event.target.value);
+                  setMunicipality('');
+                  setShowMunicipalityOptions(true);
+                  clearResults();
+                }}
+                placeholder="Typ bijvoorbeeld: Ede, Zwolle of Groningen"
+              />
 
-          {municipalityOptions.length === 0 && (
-            <p className="muted">Geen gemeenten gevonden bij deze invoer.</p>
-          )}
+              {showMunicipalityOptions && municipalitySearch && (
+                <div className="municipalityDropdown">
+                  {municipalityOptions.length > 0 ? (
+                    municipalityOptions.map((name) => (
+                      <button
+                        type="button"
+                        key={name}
+                        className="municipalitySuggestion"
+                        onClick={() => {
+                          chooseMunicipality(name);
+                          setShowMunicipalityOptions(false);
+                        }}
+                      >
+                        <span className="pin">⌖</span>
+                        <span>
+                          <strong>{name}</strong>
+                          <small>Gemeente in Nederland</small>
+                        </span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="noMunicipality">Geen gemeenten gevonden.</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </label>
 
           {municipality && <p className="chosenMunicipality">Gekozen gemeente: <strong>{municipality}</strong></p>}
 
