@@ -40,3 +40,18 @@ Niet de ZIP uploaden.
 
 Deze versie gebruikt gratis webzoekresultaten. Dat is geschikt als eerste werkende versie.
 Later kunnen we dit verbeteren met OpenAI/Bing API voor betere beoordeling en rangschikking.
+
+
+## v1.1 fix
+
+Deze versie lost op:
+- slecht leesbare witte tekst in knoppen;
+- zoekactie die soms mislukt door blokkade van gratis live zoeken;
+- fallback-resultaten met gerichte controlelinks als live zoeken geen resultaten teruggeeft.
+
+Upload opnieuw:
+- `app`
+- `package.json`
+- `README.md`
+
+Daarna zal Vercel automatisch opnieuw deployen.

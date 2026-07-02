@@ -82,7 +82,8 @@ function parseResults(html, body) {
       title: cleanText(link[2]),
       snippet: cleanText(snippet?.[1] || ''),
       url,
-      source: source(url)
+      source: source(url),
+      type: 'live resultaat'
     };
 
     item.score = score(item, body);
@@ -103,9 +104,54 @@ function parseResults(html, body) {
     .map(({ score, ...item }) => item);
 }
 
+function googleUrl(query) {
+  return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+}
+
+function fallbackResults(body, query) {
+  const { municipality, intervention, goal } = body;
+
+  const baseQueries = [
+    {
+      title: `${municipality} — officiële gemeentelijke informatie over ${intervention}`,
+      snippet: `Zoek op de officiële gemeentelijke website naar ondersteuning rond ${intervention} en het doel "${goal}". Dit is vaak de beste ingang voor toegang, Wmo, sociaal wijkteam of schuldhulp.`,
+      q: `${municipality} gemeente ${intervention} ${goal} ondersteuning sociaal wijkteam`
+    },
+    {
+      title: `Sociaal wijkteam / buurtteam ${municipality}`,
+      snippet: `Het sociaal wijkteam of buurtteam kan vaak helpen met de eerste vraagverheldering en verwijzing naar passende ondersteuning in de gemeente.`,
+      q: `${municipality} sociaal wijkteam buurtteam ${intervention}`
+    },
+    {
+      title: `Welzijnsorganisatie in ${municipality}`,
+      snippet: `Welzijnsorganisaties bieden vaak laagdrempelige ondersteuning, groepsaanbod, maatjescontact, mantelzorgondersteuning, participatie of dagstructuur.`,
+      q: `${municipality} welzijn ${intervention} ondersteuning`
+    },
+    {
+      title: `${municipality} — sociale kaart of zorgkaart`,
+      snippet: `Veel gemeenten of regio's hebben een sociale kaart met lokale voorzieningen. Zoek daarin naar de gekozen interventie.`,
+      q: `${municipality} sociale kaart ${intervention}`
+    },
+    {
+      title: `Lokale vrijwilligers- of maatschappelijke organisaties in ${municipality}`,
+      snippet: `Organisaties zoals Humanitas, MEE, mantelzorgsteunpunten of lokale welzijnspartijen kunnen passend aanbod hebben bij deze interventie.`,
+      q: `${municipality} Humanitas MEE mantelzorg welzijn ${intervention}`
+    }
+  ];
+
+  return baseQueries.map((item) => ({
+    title: item.title,
+    snippet: item.snippet,
+    url: googleUrl(item.q),
+    source: 'gerichte zoeklink',
+    type: 'suggestie'
+  }));
+}
+
 export async function POST(request) {
+  let body = {};
   try {
-    const body = await request.json();
+    body = await request.json();
     const { municipality, goal, intervention } = body;
 
     if (!municipality || !goal || !intervention) {
@@ -115,34 +161,45 @@ export async function POST(request) {
     const query = `${municipality} ${intervention} ${goal} sociaal domein gemeente welzijn wijkteam ondersteuning`;
     const url = `https://duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
 
-    const response = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 SociaalDomeinKompas/1.0' },
-      cache: 'no-store'
-    });
+    let liveResults = [];
 
-    if (!response.ok) {
+    try {
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 SociaalDomeinKompas/1.0' },
+        cache: 'no-store'
+      });
+
+      if (response.ok) {
+        const html = await response.text();
+        liveResults = parseResults(html, body);
+      }
+    } catch {
+      liveResults = [];
+    }
+
+    if (liveResults.length > 0) {
       return NextResponse.json({
         query,
-        results: [],
-        note: 'Automatisch zoeken gaf geen resultaten. Gebruik de handmatige zoekknop.'
+        results: liveResults,
+        note: 'Resultaten zijn automatisch opgehaald. Controleer altijd actualiteit, toegang en contactgegevens.'
       });
     }
 
-    const html = await response.text();
-    const results = parseResults(html, body);
+    return NextResponse.json({
+      query,
+      results: fallbackResults(body, query),
+      note: 'Live zoeken werd geblokkeerd of gaf geen sterke resultaten. Daarom toont de app gerichte controlelinks per relevante ingang.'
+    });
+  } catch (error) {
+    const query = body?.municipality && body?.intervention
+      ? `${body.municipality} ${body.intervention} ${body.goal || ''} sociaal domein`
+      : '';
 
     return NextResponse.json({
       query,
-      results,
-      note: results.length
-        ? 'Resultaten zijn automatisch opgehaald. Controleer altijd actualiteit en toegang.'
-        : 'Geen sterke resultaten gevonden. Gebruik eventueel de handmatige zoekknop.'
+      results: body?.municipality ? fallbackResults(body, query) : [],
+      note: 'Live zoeken is mislukt. De app toont waar mogelijk gerichte controlelinks.',
+      error: String(error?.message || error)
     });
-  } catch (error) {
-    return NextResponse.json({
-      results: [],
-      error: 'Zoeken is mislukt.',
-      note: String(error?.message || error)
-    }, { status: 500 });
   }
 }

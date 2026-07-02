@@ -19,3 +19,29 @@ label{display:block;font-weight:800;margin:12px 0}select{display:block;width:100
 button:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#e5e7eb;color:#111827}.query{border:1px dashed #bfdbfe;background:#f8fafc;border-radius:16px;padding:14px;color:#334155;margin-top:14px}
 .results{display:grid;gap:12px}.result{display:grid;grid-template-columns:42px 1fr;gap:14px;padding:16px;border:1px solid #bbf7d0;background:var(--green);border-radius:18px}
 .rank{background:#16a34a;color:white;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;font-weight:900}.result a{color:#1d4ed8;font-weight:900;font-size:18px;text-decoration:none}.result a:hover{text-decoration:underline}.result p{margin:8px 0}.result span{color:var(--muted);font-size:14px}
+
+
+/* v1.1 leesbaarheid fix */
+.tile, .chip, .tile strong, .chip strong, .tile span, .chip span {
+  color: #111827 !important;
+}
+
+.tile.selected, .chip.selected {
+  background: #eff6ff !important;
+  color: #111827 !important;
+  border-color: #2563eb !important;
+}
+
+.tile.selected *, .chip.selected * {
+  color: #111827 !important;
+}
+
+.chip {
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tile {
+  min-height: 150px;
+}
