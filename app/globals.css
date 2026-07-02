@@ -19,3 +19,37 @@ input{display:block;width:100%;max-width:460px;margin-top:8px;padding:13px 14px;
 .primaryButton{border:0;background:var(--primary);color:white;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer}.primaryButton:hover{background:#1e40af}.primaryButton:disabled{opacity:.65;cursor:not-allowed}
 .resultBox{margin-top:16px;padding:16px;border-radius:16px;background:#ecfdf5;border:1px solid #bbf7d0}.summary p{margin:8px 0}
 .resultsList{display:grid;gap:14px;margin-top:16px}.resultCard{background:#ffffff;border:1px solid #dbeafe;border-radius:18px;padding:18px}.resultCard h3{margin:0 0 10px;font-size:22px}.resultCard p{margin:8px 0}.resultCard a{color:#1d4ed8;font-weight:700;word-break:break-word}
+
+
+.municipalityList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 16px;
+}
+
+.municipalityOption {
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 9px 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.municipalityOption:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.municipalityOption.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.chosenMunicipality {
+  margin: 8px 0 14px;
+  color: var(--muted);
+}

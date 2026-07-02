@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from 'react';
 import { themes, goalsByDomain, interventionsByGoal } from './data/taxonomy';
+import { gemeenten } from './data/gemeenten';
 
 export default function Home() {
   const [selectedTheme, setSelectedTheme] = useState(null);
   const [selectedGoal, setSelectedGoal] = useState('');
   const [selectedIntervention, setSelectedIntervention] = useState('');
   const [municipality, setMunicipality] = useState('');
+  const [municipalitySearch, setMunicipalitySearch] = useState('');
   const [message, setMessage] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -15,24 +17,41 @@ export default function Home() {
   const goals = useMemo(() => selectedTheme ? goalsByDomain[selectedTheme.domain] || [] : [], [selectedTheme]);
   const interventions = useMemo(() => selectedGoal ? interventionsByGoal[selectedGoal] || [] : [], [selectedGoal]);
 
+  const municipalityOptions = useMemo(() => {
+    const term = municipalitySearch.trim().toLowerCase();
+    if (!term) return gemeenten.slice(0, 12);
+    return gemeenten
+      .filter((name) => name.toLowerCase().includes(term))
+      .slice(0, 12);
+  }, [municipalitySearch]);
+
+  function clearResults() {
+    setResults([]);
+    setMessage('');
+  }
+
   function chooseTheme(theme) {
     setSelectedTheme(theme);
     const firstGoal = goalsByDomain[theme.domain]?.[0] || '';
     setSelectedGoal(firstGoal);
     setSelectedIntervention(interventionsByGoal[firstGoal]?.[0] || '');
-    setResults([]);
-    setMessage('');
+    clearResults();
   }
 
   function chooseGoal(goal) {
     setSelectedGoal(goal);
     setSelectedIntervention(interventionsByGoal[goal]?.[0] || '');
-    setResults([]);
-    setMessage('');
+    clearResults();
+  }
+
+  function chooseMunicipality(name) {
+    setMunicipality(name);
+    setMunicipalitySearch(name);
+    clearResults();
   }
 
   async function searchSupport() {
-    if (!selectedTheme || !selectedGoal || !selectedIntervention || !municipality.trim()) {
+    if (!selectedTheme || !selectedGoal || !selectedIntervention || !municipality) {
       setMessage('Kies eerst een thema, doel, interventie en gemeente.');
       return;
     }
@@ -45,7 +64,7 @@ export default function Home() {
       const response = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ theme: selectedTheme.theme, domain: selectedTheme.domain, goal: selectedGoal, intervention: selectedIntervention, municipality: municipality.trim() })
+        body: JSON.stringify({ theme: selectedTheme.theme, domain: selectedTheme.domain, goal: selectedGoal, intervention: selectedIntervention, municipality })
       });
       const data = await response.json();
       if (!response.ok) {
@@ -64,9 +83,9 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
-        <p className="label">MVP deel 2</p>
+        <p className="label">MVP deel 3</p>
         <h1>Sociaal Domein Kompas</h1>
-        <p>Elementaire versie met OpenAI-koppeling. De app toont verifieerbare organisaties of meldt dat niets is gevonden.</p>
+        <p>Elementaire versie met OpenAI-koppeling en gemeente-autocomplete.</p>
       </section>
 
       <section className="notice">
@@ -102,7 +121,7 @@ export default function Home() {
           <p className="muted">Gekozen doel: <strong>{selectedGoal}</strong></p>
           <div className="optionList">
             {interventions.map((intervention) => (
-              <button key={intervention} className={`option ${selectedIntervention === intervention ? 'selected' : ''}`} onClick={() => { setSelectedIntervention(intervention); setResults([]); setMessage(''); }}>
+              <button key={intervention} className={`option ${selectedIntervention === intervention ? 'selected' : ''}`} onClick={() => { setSelectedIntervention(intervention); clearResults(); }}>
                 {intervention}
               </button>
             ))}
@@ -112,11 +131,37 @@ export default function Home() {
 
       {selectedIntervention && (
         <section className="card">
-          <h2>4. Vul gemeente in</h2>
-          <label>Gemeente
-            <input value={municipality} onChange={(event) => { setMunicipality(event.target.value); setResults([]); setMessage(''); }} placeholder="Bijvoorbeeld Ede, Utrecht of Groningen" />
+          <h2>4. Kies gemeente</h2>
+          <label>Zoek gemeente
+            <input
+              value={municipalitySearch}
+              onChange={(event) => {
+                setMunicipalitySearch(event.target.value);
+                setMunicipality('');
+                clearResults();
+              }}
+              placeholder="Typ bijvoorbeeld Ede, Utrecht of Groningen"
+            />
           </label>
-          <button className="primaryButton" onClick={searchSupport} disabled={loading}>{loading ? 'Bezig met zoeken...' : 'Zoek ondersteuning'}</button>
+
+          <div className="municipalityList">
+            {municipalityOptions.map((name) => (
+              <button
+                key={name}
+                className={`municipalityOption ${municipality === name ? 'selected' : ''}`}
+                onClick={() => chooseMunicipality(name)}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+
+          {municipality && <p className="chosenMunicipality">Gekozen gemeente: <strong>{municipality}</strong></p>}
+
+          <button className="primaryButton" onClick={searchSupport} disabled={loading || !municipality}>
+            {loading ? 'Bezig met zoeken...' : 'Zoek ondersteuning'}
+          </button>
+
           {message && <div className="resultBox">{message}</div>}
         </section>
       )}

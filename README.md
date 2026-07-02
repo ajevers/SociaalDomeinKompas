@@ -1,13 +1,12 @@
-# Sociaal Domein Kompas MVP — deel 2
+# Sociaal Domein Kompas MVP — deel 3
 
 Deze versie bevat:
 - Thema kiezen
 - Doel kiezen
 - Interventie kiezen
-- Gemeente invullen
+- Gemeente kiezen via autocomplete
 - OpenAI API-koppeling
 - Resultatenlijst met organisaties
-- Melding als geen verifieerbare organisaties worden gevonden
 
 Vereist in Vercel:
 `OPENAI_API_KEY`
