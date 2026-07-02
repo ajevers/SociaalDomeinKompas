@@ -1,16 +1,20 @@
-# Sociaal Domein Kompas MVP — deel 1
+# Sociaal Domein Kompas MVP — deel 2
 
-Bevat:
+Deze versie bevat:
 - Thema kiezen
 - Doel kiezen
 - Interventie kiezen
 - Gemeente invullen
-- Eenvoudige interface
-- Nog geen OpenAI-koppeling
+- OpenAI API-koppeling
+- Resultatenlijst met organisaties
+- Melding als geen verifieerbare organisaties worden gevonden
+
+Vereist in Vercel:
+`OPENAI_API_KEY`
 
 Upload/vervang in GitHub:
 - `app`
 - `package.json`
 - `README.md`
 
-Daarna deployt Vercel automatisch opnieuw.
+Vercel deployt daarna automatisch opnieuw.
