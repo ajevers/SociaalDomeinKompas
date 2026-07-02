@@ -1,31 +1,33 @@
-# Sociaal Domein Kompas MVP — deel 4
+# Sociaal Domein Kompas MVP — deel 5
 
 Deze versie bevat:
 - Thema kiezen
 - Doel kiezen
 - Interventie kiezen
-- Gemeente kiezen via autocomplete
+- Gemeente kiezen via filterbare dropdownlijst
 - OpenAI API-koppeling
 - OpenAI web search tool
 - Resultatenlijst met bronlinks
 
-Vereist in Vercel:
+## Gemeente kiezen
+
+Je typt een paar letters in het filterveld.
+Daarna toont de dropdown alleen gemeenten die daarbij passen.
+
+Voorbeelden:
+- `ed` → Ede, Edam-Volendam
+- `zwol` → Zwolle
+- `gron` → Groningen
+
+## Vereist in Vercel
+
 `OPENAI_API_KEY`
 
-Upload/vervang in GitHub:
+## Uploaden naar GitHub
+
+Upload/vervang:
 - `app`
 - `package.json`
 - `README.md`
 
 Vercel deployt daarna automatisch opnieuw.
-
-## Belangrijk
-
-Deze versie gebruikt OpenAI web search. Daardoor kan de app actuele openbare pagina's vinden, zoals gemeentelijke pagina's over budgetbeheer, schuldhulp, mantelzorg of welzijn.
-
-De app blijft neutraal:
-- geen score
-- geen advies
-- geen rangschikking
-- geen verzonnen organisaties
-- alleen resultaten met bronlinks

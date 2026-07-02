@@ -83,9 +83,9 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
-        <p className="label">MVP deel 4</p>
+        <p className="label">MVP deel 5</p>
         <h1>Sociaal Domein Kompas</h1>
-        <p>Elementaire versie met gemeente-autocomplete en OpenAI web search.</p>
+        <p>Elementaire versie met filterbare gemeentelijst en OpenAI web search.</p>
       </section>
 
       <section className="notice">
@@ -132,7 +132,8 @@ export default function Home() {
       {selectedIntervention && (
         <section className="card">
           <h2>4. Kies gemeente</h2>
-          <label>Zoek gemeente
+
+          <label>Filter gemeenten
             <input
               value={municipalitySearch}
               onChange={(event) => {
@@ -140,21 +141,26 @@ export default function Home() {
                 setMunicipality('');
                 clearResults();
               }}
-              placeholder="Typ bijvoorbeeld Ede, Utrecht of Groningen"
+              placeholder="Typ bijvoorbeeld: ed, zwol, gron"
             />
           </label>
 
-          <div className="municipalityList">
-            {municipalityOptions.map((name) => (
-              <button
-                key={name}
-                className={`municipalityOption ${municipality === name ? 'selected' : ''}`}
-                onClick={() => chooseMunicipality(name)}
-              >
-                {name}
-              </button>
-            ))}
-          </div>
+          <label>Gemeente
+            <select
+              className="municipalitySelect"
+              value={municipality}
+              onChange={(event) => chooseMunicipality(event.target.value)}
+            >
+              <option value="">Kies een gemeente</option>
+              {municipalityOptions.map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </label>
+
+          {municipalityOptions.length === 0 && (
+            <p className="muted">Geen gemeenten gevonden bij deze invoer.</p>
+          )}
 
           {municipality && <p className="chosenMunicipality">Gekozen gemeente: <strong>{municipality}</strong></p>}
 
