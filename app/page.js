@@ -83,9 +83,9 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
-        <p className="label">MVP deel 3</p>
+        <p className="label">MVP deel 4</p>
         <h1>Sociaal Domein Kompas</h1>
-        <p>Elementaire versie met OpenAI-koppeling en gemeente-autocomplete.</p>
+        <p>Elementaire versie met gemeente-autocomplete en OpenAI web search.</p>
       </section>
 
       <section className="notice">
